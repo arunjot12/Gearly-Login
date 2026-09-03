@@ -12,8 +12,7 @@ pub struct JwtService {
 
 impl JwtService {
     pub fn new() -> Self {
-        let secret = env::var("JWT_SECRET")
-            .unwrap_or_else(|_| "your-super-secret-key-for-dev-only".to_string());
+        let secret = env::var("JWT_SECRET").expect("JWT service not found");
         Self {
             encoding_key: EncodingKey::from_secret(secret.as_bytes()),
             decoding_key: DecodingKey::from_secret(secret.as_bytes()),
