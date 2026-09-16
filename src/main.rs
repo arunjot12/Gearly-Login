@@ -1,53 +1,63 @@
-pub mod db;
-pub mod models;
-pub mod schema;
-pub mod dashboard;
-pub mod signup;
-pub mod login;
 pub mod auth;
 pub mod cors;
+pub mod dashboard;
+pub mod db;
+pub mod login;
+pub mod models;
+pub mod schema;
+pub mod signup;
 
-use axum::{Json, Router, routing::{get,post}, serve};
-use tokio::net::TcpListener;
-use serde_json::{json,Value};
 use crate::{
-    auth::jwt::JwtService, 
-    dashboard::product::protected_dashboard, 
-    db::{create_pool,DbPool}, login::creditionals::login_user, models::NewSignupShopkeepers, 
+    auth::jwt::JwtService,
+    cors::cors_allow,
+    dashboard::product::protected_dashboard,
+    db::{DbPool, create_pool},
+    login::creditionals::login_user,
+    models::NewSignupShopkeepers,
     signup::api::{signup_shopkeeper, signup_users},
-    cors::cors_allow
 };
+use axum::{
+    Json, Router,
+    routing::{get, post},
+    serve,
+};
+use serde_json::{Value, json};
+use tokio::net::TcpListener;
 
 #[derive(Clone)]
-pub struct AppState{
+pub struct AppState {
     pub db: DbPool,
-    pub jwt: JwtService
+    pub jwt: JwtService,
 }
 
 #[tokio::main]
 async fn main() {
+    dotenv::dotenv().ok();
     let jwt_service = JwtService::new();
     let pool = create_pool();
 
-    let state = AppState{ db: pool, jwt:jwt_service};
+    let state = AppState {
+        db: pool,
+        jwt: jwt_service,
+    };
 
     let app = Router::new()
-    .route("/signup_shopkeeper",post(signup_shopkeeper))
-    .route("/signup_user", post(signup_users))
-    .route("/login_user", post(login_user))
-    .route("/dashboard",get(protected_dashboard))
-    .route("/health",get(health_check))
-    .layer(cors_allow())
-    .with_state(state);
+        .route("/signup_shopkeeper", post(signup_shopkeeper))
+        .route("/signup_user", post(signup_users))
+        .route("/login_user", post(login_user))
+        .route("/dashboard", get(protected_dashboard))
+        .route("/health", get(health_check))
+        .layer(cors_allow())
+        .with_state(state);
 
     let port: u16 = std::env::var("PORT")
-    .ok()
-    .and_then(|p| p.parse().ok())
-    .unwrap_or(3000);
+        .ok()
+        .and_then(|p| p.parse().ok())
+        .unwrap_or(3000);
 
     let listener = TcpListener::bind(format!("0.0.0.0:{port}"))
-    .await
-    .unwrap_or_else(|e| panic!("failed to bind to port {port}: {e}"));
+        .await
+        .unwrap_or_else(|e| panic!("failed to bind to port {port}: {e}"));
 
     tracing::info!(port, "🚀 server listening");
 

@@ -36,7 +36,7 @@ impl IntoResponse for AppError {
                 (StatusCode::UNAUTHORIZED, "Invalid creditionals".to_string()).into_response()
             }
             UserAlreadyExists =>{
-                (StatusCode::UNAUTHORIZED, "User not found".to_string()).into_response()
+                (StatusCode::CONFLICT, "User already existed".to_string()).into_response()
             }
             NotFound => {
                 (StatusCode::NOT_FOUND, "User not found".to_string()).into_response()
