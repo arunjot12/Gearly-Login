@@ -1,5 +1,10 @@
 use crate::{
-    models::{NewSignupShopkeepers, NewUsers, SignupShopkeepers, Users}, schema::{signup_shopkeepers, users}, signup::handler::AppError::{Database, DatabaseInteractError, Internal, InvalidCreditionals, NotFound, ThreadError, UserAlreadyExists},
+    models::{NewSignupShopkeepers, NewUsers, SignupShopkeepers, Users},
+    schema::{shopkeepers, users},
+    signup::handler::AppError::{
+        Database, DatabaseInteractError, Internal, InvalidCreditionals, NotFound, ThreadError,
+        UserAlreadyExists,
+    },
 };
 use axum::response::IntoResponse;
 use diesel::{insert_into, mysql::MysqlConnection, prelude::*};
@@ -23,10 +28,10 @@ pub enum AppError {
     UserAlreadyExists,
 
     #[error("InteractError Error")]
-    DatabaseInteractError(#[from]deadpool_diesel::InteractError),
+    DatabaseInteractError(#[from] deadpool_diesel::InteractError),
 
     #[error("Tokio Error")]
-    ThreadError(String)
+    ThreadError(String),
 }
 
 impl IntoResponse for AppError {
@@ -35,16 +40,26 @@ impl IntoResponse for AppError {
             InvalidCreditionals => {
                 (StatusCode::UNAUTHORIZED, "Invalid creditionals".to_string()).into_response()
             }
-            UserAlreadyExists =>{
+            UserAlreadyExists => {
                 (StatusCode::CONFLICT, "User already existed".to_string()).into_response()
             }
-            NotFound => {
-                (StatusCode::NOT_FOUND, "User not found".to_string()).into_response()
-            }
-            Database(e) => ( StatusCode::INTERNAL_SERVER_ERROR,format!("{e}.to_string()",)).into_response(),
-            Internal => ( StatusCode::INTERNAL_SERVER_ERROR, "Internal Server Error".to_string()).into_response(),
-            DatabaseInteractError(e) => ( StatusCode::INTERNAL_SERVER_ERROR,format!("{e}.to_string()")).into_response(),
-            ThreadError(s) => (format!("{s}.to_string")).into_response(),      
+            NotFound => (StatusCode::NOT_FOUND, "User not found".to_string()).into_response(),
+            Database(e) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("{e}.to_string()",),
+            )
+                .into_response(),
+            Internal => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Internal Server Error".to_string(),
+            )
+                .into_response(),
+            DatabaseInteractError(e) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("{e}.to_string()"),
+            )
+                .into_response(),
+            ThreadError(s) => (format!("{s}.to_string")).into_response(),
         }
     }
 }
@@ -81,20 +96,20 @@ pub fn handle_shopkeeper_signup(
 ) -> Result<String, AppError> {
     if let Some(ref phone) = shopkeeper.phone_number {
         let check_shopkeeper_number: Result<Option<SignupShopkeepers>, _> =
-            signup_shopkeepers::table
+            shopkeepers::table
                 .select(SignupShopkeepers::as_select())
-                .filter(signup_shopkeepers::phone_number.eq(phone))
+                .filter(shopkeepers::phone_number.eq(phone))
                 .first(connection)
                 .optional();
 
-      match check_shopkeeper_number {
-        Ok(Some(_)) => return Err(AppError::UserAlreadyExists), // You need to define this error
-        Ok(None) => {}                                          // Good, no user found, proceed
-         Err(err) => return Err(AppError::Database(err)),
-    }
+        match check_shopkeeper_number {
+            Ok(Some(_)) => return Err(AppError::UserAlreadyExists), // You need to define this error
+            Ok(None) => {}                                          // Good, no user found, proceed
+            Err(err) => return Err(AppError::Database(err)),
+        }
     }
 
-    let insert_result = insert_into(signup_shopkeepers::table)
+    let insert_result = insert_into(shopkeepers::table)
         .values(shopkeeper)
         .execute(connection);
 

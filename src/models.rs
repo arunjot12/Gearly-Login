@@ -1,21 +1,23 @@
-use diesel::prelude::*;
 use chrono::NaiveDateTime;
+use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Queryable, Insertable,Serialize, Deserialize, Selectable)]
+#[derive(Debug, Queryable, Insertable, Serialize, Deserialize, Selectable)]
 #[diesel(table_name = crate::schema::users)]
 pub struct NewUsers {
     pub first_name: String,
+    pub last_name: String,
     pub username: String,
     pub email: String,
     pub password: String,
     pub phone_number: String,
 }
 
-#[derive(Debug, Queryable, Selectable,Serialize, Deserialize, Insertable)]
-#[diesel(table_name = crate::schema::signup_shopkeepers)]
+#[derive(Debug, Queryable, Selectable, Serialize, Deserialize, Insertable)]
+#[diesel(table_name = crate::schema::shopkeepers)]
 pub struct NewSignupShopkeepers {
     pub first_name: Option<String>,
+    pub last_name: String,
     pub username: String,
     pub email: Option<String>,
     pub password: Option<String>,
@@ -29,8 +31,9 @@ pub struct NewSignupShopkeepers {
 #[diesel(table_name = crate::schema::users)]
 pub struct Users {
     pub id: i32,
-    pub username: Option<String>,
     pub first_name: Option<String>,
+    pub last_name: String,
+    pub username: Option<String>,
     pub email: Option<String>,
     pub password: Option<String>,
     pub phone_number: String,
@@ -39,10 +42,11 @@ pub struct Users {
 }
 
 #[derive(Debug, Queryable, Selectable)]
-#[diesel(table_name = crate::schema::signup_shopkeepers)]
+#[diesel(table_name = crate::schema::shopkeepers)]
 pub struct SignupShopkeepers {
     pub id: i32,
     pub first_name: Option<String>,
+    pub last_name: String,
     pub username: Option<String>,
     pub email: Option<String>,
     pub password: Option<String>,
@@ -55,7 +59,7 @@ pub struct SignupShopkeepers {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Login{
+pub struct Login {
     pub username_or_email: String,
-    pub password: String
+    pub password: String,
 }

@@ -1,8 +1,5 @@
 use crate::models::NewUsers;
-use argon2::{
-    Argon2, PasswordHasher,
-    password_hash::SaltString,
-};
+use argon2::{Argon2, PasswordHasher, password_hash::SaltString};
 use rand_core::OsRng;
 use validator::ValidateEmail;
 
@@ -29,6 +26,7 @@ pub async fn check_signup_user(req: NewUsers) -> Result<NewUsers, String> {
 
     Ok(NewUsers {
         first_name: req.first_name,
+        last_name: req.last_name,
         username: req.username,
         email: req.email,
         phone_number: req.phone_number,
