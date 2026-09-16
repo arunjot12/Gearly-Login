@@ -61,11 +61,11 @@ async fn main() {
 
     tracing::info!(port, "🚀 server listening");
 
-    print_startup_info();
+    print_startup_info(port);
     serve(listener, app).await.unwrap();
 }
 
-pub fn print_startup_info() {
+pub fn print_startup_info(port: u16) {
     println!();
     println!("╔══════════════════════════════════════════════════════════╗");
     println!("║                    🚗  GEARLY API                        ║");
@@ -87,7 +87,7 @@ pub fn print_startup_info() {
 
     println!();
 
-    println!("  🚀 Server running at http://127.0.0.1:3000");
+    println!("  🚀 Server running at http://127.0.0.1:{:?}", port);
     println!();
 }
 
