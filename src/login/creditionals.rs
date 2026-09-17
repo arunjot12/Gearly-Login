@@ -8,9 +8,10 @@ use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use axum::{Json, extract::State, http::StatusCode};
 use diesel::prelude::*;
 
+#[axum::debug_handler]
 pub async fn login_shopkeeper(
-    Json(payload): Json<Login>,
     State(state): State<AppState>,
+    Json(payload): Json<Login>,
 ) -> Result<Json<String>, AppError> {
     let connection = state
         .db

@@ -12,7 +12,7 @@ use crate::{
     cors::cors_allow,
     dashboard::product::protected_dashboard,
     db::{DbPool, create_pool},
-    login::creditionals::login_user,
+    login::creditionals::{login_shopkeeper, login_user},
     models::NewSignupShopkeepers,
     signup::api::{signup_shopkeeper, signup_users},
 };
@@ -46,6 +46,7 @@ async fn main() {
         .route("/signup_user", post(signup_users))
         .route("/login_user", post(login_user))
         .route("/dashboard", get(protected_dashboard))
+        .route("/login_shopkeeper", post(login_shopkeeper))
         .route("/health", get(health_check))
         .layer(cors_allow())
         .with_state(state);
