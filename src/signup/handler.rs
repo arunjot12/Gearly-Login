@@ -18,7 +18,7 @@ pub enum AppError {
     #[error("User Not Found")]
     NotFound,
 
-    #[error("Database error")]
+    #[error("Database error :{0}")]
     Database(#[from] diesel::result::Error),
 
     #[error("Internal Server Error")]

@@ -1,13 +1,11 @@
 use crate::models::NewSignupShopkeepers;
-use argon2::{
-    password_hash::SaltString,
-    Argon2,
-    PasswordHasher,
-};
+use argon2::{Argon2, PasswordHasher, password_hash::SaltString};
 use rand_core::OsRng;
 use validator::ValidateEmail;
 
-pub async fn check_signup_shopkeeper(req: NewSignupShopkeepers) -> Result<NewSignupShopkeepers, String> {
+pub async fn check_signup_shopkeeper(
+    req: NewSignupShopkeepers,
+) -> Result<NewSignupShopkeepers, String> {
     if let Some(ref email) = req.email {
         if !email.validate_email() {
             return Err("Invalid email format".into());
