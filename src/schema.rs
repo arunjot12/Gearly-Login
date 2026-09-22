@@ -1,28 +1,10 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
-    products (id) {
-        id -> Integer,
-        #[max_length = 255]
-        name -> Varchar,
-        price -> Integer,
-        #[max_length = 255]
-        descri -> Varchar,
-        #[max_length = 100]
-        part_number -> Varchar,
-        created_at -> Nullable<Timestamp>,
-        updated_at -> Nullable<Timestamp>,
-        shopkeeper_id -> Integer,
-    }
-}
-
-diesel::table! {
-    shopkeepers (id) {
+    signup_shopkeepers (id) {
         id -> Integer,
         #[max_length = 255]
         first_name -> Nullable<Varchar>,
-        #[max_length = 255]
-        last_name -> Varchar,
         #[max_length = 255]
         username -> Nullable<Varchar>,
         #[max_length = 255]
@@ -48,8 +30,6 @@ diesel::table! {
         #[max_length = 255]
         first_name -> Nullable<Varchar>,
         #[max_length = 255]
-        last_name -> Varchar,
-        #[max_length = 255]
         username -> Nullable<Varchar>,
         #[max_length = 255]
         email -> Nullable<Varchar>,
@@ -62,4 +42,4 @@ diesel::table! {
     }
 }
 
-diesel::allow_tables_to_appear_in_same_query!(products, shopkeepers, users,);
+diesel::allow_tables_to_appear_in_same_query!(signup_shopkeepers, users,);
